@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginError, setLoginError] = useState<string>('');
   const [lastSubmissionName, setLastSubmissionName] = useState<string>('');
+  const [lastFileUrl, setLastFileUrl] = useState<string>('');
   const [submissions, setSubmissions] = useState<StudentSubmission[]>([]);
   const [isTeacher, setIsTeacher] = useState(false);
   const [teacherName, setTeacherName] = useState('');
@@ -77,6 +78,7 @@ const App: React.FC = () => {
         });
 
         if (res && res.success) {
+          setLastFileUrl(res.fileUrl || '');
           setStatus(AppStatus.SUCCESS);
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
           fetchSubmissions(true);
@@ -133,6 +135,11 @@ const App: React.FC = () => {
     }
   };
 
+  const handleResetStatus = () => {
+    setStatus(AppStatus.IDLE);
+    setLastFileUrl('');
+  };
+
   return (
     <div className="min-h-screen pb-12">
       {/* Dynamic Header with Pastel Gradient */}
@@ -180,7 +187,7 @@ const App: React.FC = () => {
             <div className="relative z-10">
               {status === AppStatus.IDLE && <SubmissionForm onSubmit={handleSubmit} />}
               {status === AppStatus.UPLOADING && <LoadingView studentName={lastSubmissionName} />}
-              {status === AppStatus.SUCCESS && <SuccessView onReset={() => setStatus(AppStatus.IDLE)} />}
+              {status === AppStatus.SUCCESS && <SuccessView onReset={handleResetStatus} shareUrl={lastFileUrl} />}
               {status === AppStatus.ERROR && (
                 <div className="text-center p-12">
                   <div className="text-8xl mb-6 text-red-400">😢</div>
