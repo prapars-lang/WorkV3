@@ -33,6 +33,7 @@
         }
 
         .font-kids { font-family: 'Fredoka', 'Sarabun', sans-serif; }
+        .font-sarabun { font-family: 'Sarabun', sans-serif; }
 
         .glass-morphism {
             background: rgba(255, 255, 255, 0.85);
@@ -71,24 +72,39 @@
                 width: 100% !important;
                 border-collapse: collapse !important;
                 font-family: 'Sarabun', sans-serif !important;
+                margin: 20px 0 !important;
+                border: 1px solid black !important;
             }
             th, td {
-                border: 0.5pt solid #000 !important;
+                border: 1px solid black !important;
                 padding: 8px 6px !important;
                 font-size: 11pt !important;
                 color: black !important;
                 -webkit-print-color-adjust: exact;
+                line-height: 1.4;
             }
             th {
                 background-color: #f1f5f9 !important;
                 font-weight: bold !important;
+                text-align: center !important;
             }
             tr {
                 page-break-inside: avoid !important;
             }
-            h1, h2, h3, p, span {
+            h1, h2, h3, h4, p, span, div, td, th {
                 color: black !important;
                 font-family: 'Sarabun', sans-serif !important;
+            }
+            .print-header {
+                text-align: center;
+                margin-bottom: 25px;
+                border-bottom: 2px solid black;
+                padding-bottom: 15px;
+            }
+            .print-footer {
+                margin-top: 50px;
+                display: flex !important;
+                justify-content: space-around;
             }
         }
 
