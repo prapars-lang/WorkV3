@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import confetti from "canvas-confetti";
@@ -137,7 +136,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen pb-12">
       {/* Dynamic Header with Pastel Gradient */}
-      <header className="w-full h-[60px] bg-white/40 backdrop-blur-md border-b-2 border-white shadow-sm flex items-center px-4 md:px-8 sticky top-0 z-[100]">
+      <header className="w-full h-[60px] bg-white/40 backdrop-blur-md border-b-2 border-white shadow-sm flex items-center px-4 md:px-8 sticky top-0 z-[100] no-print">
         <div className="max-w-6xl mx-auto w-full flex justify-between items-center">
           <div 
             className="flex items-center gap-2 cursor-pointer group"
@@ -167,12 +166,14 @@ const App: React.FC = () => {
       </header>
 
       <div className="max-w-6xl mx-auto px-4 mt-8">
-        <div className="text-center mb-8 animate-in fade-in slide-in-from-top duration-700">
+        <div className="text-center mb-8 animate-in fade-in slide-in-from-top duration-700 no-print">
            <h2 className="text-3xl md:text-4xl font-kids text-slate-700 mb-1 drop-shadow-sm">ยินดีต้อนรับนะจ๊ะเด็กๆ! 🌈</h2>
            <p className="text-slate-500 font-bold text-sm bg-white/30 inline-block px-4 py-1 rounded-full backdrop-blur-sm">ระบบส่งงานวิชาสุขศึกษาและพลศึกษา</p>
         </div>
 
-        <Navigation currentView={currentView} setView={setCurrentView} />
+        <div className="no-print">
+          <Navigation currentView={currentView} setView={setCurrentView} />
+        </div>
 
         <main className="glass-morphism rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 min-h-[600px] transition-all duration-500 relative overflow-hidden">
           {currentView === AppView.STUDENT && (
@@ -217,7 +218,7 @@ const App: React.FC = () => {
           {status === AppStatus.IDLE && currentView === AppView.DASHBOARD && <DashboardView submissions={submissions} />}
         </main>
 
-        <footer className="mt-16 text-center">
+        <footer className="mt-16 text-center no-print">
           <div className="inline-flex flex-col items-center gap-3 bg-white/40 backdrop-blur-md px-10 py-5 rounded-[2rem] border-2 border-white shadow-sm">
             <p className="text-slate-500 font-bold text-sm md:text-base">
               © 2025 สุขศึกษาและพลศึกษา | Krukaihuo
