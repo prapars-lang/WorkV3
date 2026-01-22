@@ -1,8 +1,7 @@
-
 /**
  * *********************************************************************************
  * ระบบบริหารจัดการงานกิจกรรม (วิชาสุขศึกษาและพลศึกษา 2568)
- * ฉบับแก้ไข: Data Healing - กู้คืนคอลัมน์ที่สลับกันให้ถูกต้อง
+ * ฉบับแก้ไข: เพิ่มระบบแจ้งเตือนผลการตรวจคะแนน (Grading Notification)
  * *********************************************************************************
  */
 
@@ -69,51 +68,26 @@ function getSubmissionsWithReviews() {
       }
 
       if (subData.length > 1) {
-        // แถวที่ต้องแก้ไขในชีตจริง (ถ้ามี)
         let rowsToFix = [];
-
         const activityResults = subData.slice(1).map((row, index) => {
           if (!row[0]) return null;
-          
           let activityType = row[6];
           let fileUrl = row[7];
-
-          // 🛠️ DATA HEALING: ถ้าช่อง Activity เป็น URL ให้สลับค่ากลับ
           if (activityType && activityType.toString().indexOf('http') === 0) {
             fileUrl = activityType;
-            activityType = act; // 'Sports Day' หรือ 'Children Day'
-            
-            // เก็บดัชนีไว้เพื่อไปอัปเดตในชีตให้ถูกต้องถาวร
-            rowsToFix.push({
-              rowNum: index + 2, 
-              activity: activityType,
-              url: fileUrl
-            });
+            activityType = act;
+            rowsToFix.push({ rowNum: index + 2, activity: activityType, url: fileUrl });
           }
-
-          // กรณีช่อง Activity ว่างเปล่า
           if (!activityType) activityType = act;
-
           return {
-            rowId: row[0], 
-            timestamp: row[1], 
-            name: row[2], 
-            studentNumber: row[3] ? row[3].toString() : "", 
-            grade: row[4], 
-            room: row[5], 
-            activityType: activityType, 
-            fileUrl: fileUrl,
+            rowId: row[0], timestamp: row[1], name: row[2], studentNumber: row[3] ? row[3].toString() : "", grade: row[4], room: row[5], activityType: activityType, fileUrl: fileUrl,
             review: reviewMap[row[0]] || null
           };
         }).filter(r => r !== null);
 
-        // ทำการ Fix ข้อมูลในชีตให้ถูกต้อง (Async-like)
         if (rowsToFix.length > 0) {
-          rowsToFix.forEach(fix => {
-            subSheet.getRange(fix.rowNum, 7, 1, 2).setValues([[fix.activity, fix.url]]);
-          });
+          rowsToFix.forEach(fix => { subSheet.getRange(fix.rowNum, 7, 1, 2).setValues([[fix.activity, fix.url]]); });
         }
-
         allData = allData.concat(activityResults);
       }
     });
@@ -130,17 +104,13 @@ function processSubmission(data) {
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     const fileUrl = file.getUrl();
-
     const activity = data.activityType || 'Sports Day';
     const sheetName = getSheetName('Submissions', activity);
     const sheet = getSheet(sheetName);
     const nextId = sheet.getLastRow() > 0 ? sheet.getLastRow() : 1;
-    
     sheet.appendRow([nextId, new Date(), data.name, data.studentNumber, data.grade, data.room, activity, fileUrl]);
-    
     const actName = activity === 'Sports Day' ? 'งานกีฬาสี 🏃' : 'งานวันเด็ก 🎈';
     sendTelegramNotification(`<b>📢 ส่งงานใหม่! (${actName})</b>\n👤 ${data.name}\n🏫 ${data.grade}/${data.room}\n🔗 <a href="${fileUrl}">ดูวิดีโอ</a>`);
-    
     return { success: true, fileUrl: fileUrl };
   } catch (e) { return { success: false, message: e.toString() }; }
 }
@@ -160,6 +130,19 @@ function saveRubricReview(data) {
     const rowData = [data.rowId, data.contentAccuracy, data.participation, data.presentation, data.discipline, data.totalScore, data.percentage, data.comment, new Date()];
     if (rowIndex > 0) sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
     else sheet.appendRow(rowData);
+
+    // 🛠️ NOTIFICATION: ส่งแจ้งเตือนเมื่อตรวจงานเสร็จ
+    const subSheet = getSheet(getSheetName('Submissions', activity));
+    const subValues = subSheet.getDataRange().getValues();
+    let studentName = "นักเรียน";
+    for (let j = 1; j < subValues.length; j++) {
+      if (subValues[j][0].toString() === data.rowId.toString()) {
+        studentName = subValues[j][2];
+        break;
+      }
+    }
+    const actName = activity === 'Sports Day' ? 'งานกีฬาสี 🏃' : 'งานวันเด็ก 🎈';
+    sendTelegramNotification(`<b>✅ ตรวจผลงานแล้ว! (${actName})</b>\n👤 ${studentName}\n📊 คะแนน: <b>${data.totalScore}/20</b> (${data.percentage}%)\n💬 ${data.comment}`);
     
     return { success: true };
   } catch (e) { return { success: false, message: e.toString() }; }

@@ -42,7 +42,7 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         }
 
-        /* 🖨️ CSS สำหรับการพิมพ์รายงาน PDF แบบเป็นทางการ */
+        /* 🖨️ Professional PDF Print Settings */
         @media print {
             @page {
                 size: A4;
@@ -64,8 +64,7 @@
                 box-shadow: none !important;
                 background: white !important;
             }
-            /* ซ่อนองค์ประกอบที่ไม่ใช่เนื้อหารายงาน */
-            .no-print, header, footer, nav, .teacher-nav, .filter-controls, .video-list-item, button:not(.print-table-section button) {
+            .no-print, header, footer, nav, .teacher-nav, .filter-controls, .video-list-item, button, .ai-batch-button {
                 display: none !important;
             }
             .glass-morphism {
@@ -76,7 +75,6 @@
                 padding: 0 !important;
                 margin: 0 !important;
             }
-            /* จัดรูปแบบตารางสำหรับพิมพ์ */
             .print-table-section {
                 display: block !important;
                 width: 100% !important;
@@ -85,18 +83,18 @@
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
-                margin: 10px 0 !important;
-                border: 0.5pt solid #000 !important;
+                margin: 15px 0 !important;
+                border: 1pt solid #000 !important;
             }
             th, td {
-                border: 0.5pt solid #000 !important;
-                padding: 6px 4px !important;
-                font-size: 10pt !important;
+                border: 1pt solid #000 !important;
+                padding: 8px 5px !important;
+                font-size: 10.5pt !important;
                 color: black !important;
-                line-height: 1.2;
+                line-height: 1.4;
             }
             th {
-                background-color: #f1f5f9 !important;
+                background-color: #f8fafc !important;
                 font-weight: bold !important;
                 text-align: center !important;
             }
