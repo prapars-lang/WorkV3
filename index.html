@@ -43,41 +43,9 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         }
 
-        /* Print Styles for Score Summary PDF */
         @media print {
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                display: block !important;
-                background: white !important;
-                color: black !important;
-                padding: 0;
-            }
-            @page {
-                size: A4 portrait;
-                margin: 15mm;
-            }
-            table { 
-                width: 100%; 
-                border-collapse: collapse; 
-                margin-top: 20px;
-                font-family: 'Sarabun', sans-serif !important;
-            }
-            th, td { 
-                border: 1px solid #000 !important; 
-                padding: 8px !important; 
-                text-align: center;
-                font-size: 11pt !important;
-                color: black !important;
-            }
-            th { 
-                background-color: #f3f4f6 !important; 
-                font-weight: bold;
-            }
+            #root, #root * { visibility: visible; }
             .no-print { display: none !important; }
         }
 
@@ -122,11 +90,16 @@
 
     <div id="root"></div>
 
-    <!-- Area for printing PDF -->
-    <div id="print-area" class="hidden"></div>
-
     <script type="text/babel" data-type="module">
-        import "./index.tsx";
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        import App from './App.tsx';
+
+        const container = document.getElementById('root');
+        if (container) {
+            const root = createRoot(container);
+            root.render(<App />);
+        }
     </script>
 </body>
 </html>
