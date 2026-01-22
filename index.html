@@ -43,7 +43,7 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         }
 
-        /* Print Styles for Professional PDF Reports */
+        /* Print Styles for Score Summary PDF */
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -59,30 +59,24 @@
             }
             @page {
                 size: A4 portrait;
-                margin: 20mm 15mm;
+                margin: 15mm;
             }
             table { 
                 width: 100%; 
                 border-collapse: collapse; 
-                margin-top: 15px;
+                margin-top: 20px;
                 font-family: 'Sarabun', sans-serif !important;
             }
             th, td { 
                 border: 1px solid #000 !important; 
-                padding: 10px 8px !important; 
+                padding: 8px !important; 
                 text-align: center;
                 font-size: 11pt !important;
-                line-height: 1.2;
+                color: black !important;
             }
             th { 
                 background-color: #f3f4f6 !important; 
-                -webkit-print-color-adjust: exact;
                 font-weight: bold;
-            }
-            .print-header { 
-                text-align: center; 
-                margin-bottom: 25px; 
-                font-family: 'Sarabun', sans-serif !important;
             }
             .no-print { display: none !important; }
         }
@@ -128,9 +122,11 @@
 
     <div id="root"></div>
 
-    <!-- Area for printing PDF (Hidden by default) -->
+    <!-- Area for printing PDF -->
     <div id="print-area" class="hidden"></div>
 
-    <script type="text/babel" data-type="module" src="index.tsx"></script>
+    <script type="text/babel" data-type="module">
+        import "./index.tsx";
+    </script>
 </body>
 </html>
