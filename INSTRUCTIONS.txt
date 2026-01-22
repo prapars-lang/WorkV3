@@ -1,0 +1,32 @@
+
+HOW TO DEPLOY AS A GOOGLE APPS SCRIPT WEB APP:
+
+1. Go to https://script.google.com and create a new project.
+2. Replace the contents of "Code.gs" with the provided Code.gs code.
+3. In the Apps Script project, create a new HTML file named "index.html" and paste the contents of the generated index.html.
+4. (Since this is a React SPA) You will need to bundle the React code or use a build tool like 'clasp' to push the compiled assets.
+   - For a quick manual test: You can place the React component logic inside a <script type="text/babel"> tag in index.html, but for production, it's best to host the compiled JS.
+   - ALTERNATIVELY, if you are using this code block directly in a developer environment that handles the React compilation, it will generate the necessary artifacts.
+
+5. IMPORTANT CONFIGURATION:
+   - Create a Folder in your Google Drive to store videos. Copy its ID (the string after /folders/ in the URL).
+   - Create a Google Sheet to store logs. Copy its ID (the string after /d/ in the URL).
+   - Update the `CONFIG` object at the top of `Code.gs` with these IDs.
+
+6. DEPLOY:
+   - Click "Deploy" > "New Deployment".
+   - Select "Web App".
+   - Set "Execute as" to "Me" (your account).
+   - Set "Who has access" to "Anyone" (so students don't need to log into a Google Workspace account, or "Anyone with a Google Account" for more security).
+   - Click "Deploy".
+
+7. AUTHORIZATION:
+   - Grant the necessary permissions (Drive and Sheets access) when prompted.
+
+8. TESTING:
+   - Copy the "Web App URL" provided and send it to your students!
+
+DESIGN NOTES:
+- The UI uses Fredoka One and Quicksand fonts for a rounded, friendly feel.
+- Colors are soft pastels (Blue-50, Pink-50, etc.) with bold primary action colors.
+- Confetti.js is used for a celebration effect on success.
