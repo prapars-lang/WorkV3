@@ -18,7 +18,7 @@ const TeacherView: React.FC<TeacherViewProps> = ({ submissions, onUpdate, handle
   const [filterText, setFilterText] = useState('');
   const [filterGrade, setFilterGrade] = useState('All');
   const [filterRoom, setFilterRoom] = useState('All');
-  const [filterActivity, setFilterActivity] = useState('Sports Day');
+  const [filterActivity, setFilterActivity] = useState('All');
   const [filterStatus, setFilterStatus] = useState<'All' | 'Pending' | 'Graded'>('All');
 
   const [summaryGrade, setSummaryGrade] = useState('Prathom 5');
@@ -68,9 +68,7 @@ const TeacherView: React.FC<TeacherViewProps> = ({ submissions, onUpdate, handle
     return submissions
       .filter(s => s.grade === summaryGrade && s.activityType === summaryActivity)
       .sort((a, b) => {
-        // เรียงตามห้องก่อน
         if (a.room !== b.room) return a.room.localeCompare(b.room);
-        // เรียงตามเลขที่แบบตัวเลข (สำคัญ)
         return parseInt(a.studentNumber || '0') - parseInt(b.studentNumber || '0');
       });
   }, [submissions, summaryGrade, summaryActivity]);
@@ -136,8 +134,8 @@ const TeacherView: React.FC<TeacherViewProps> = ({ submissions, onUpdate, handle
             <div>
               <h2 className="text-xl font-kids text-indigo-600">จัดการข้อมูลโดยคุณครู {teacherName}</h2>
               <div className="flex gap-2 mt-2">
-                <button onClick={() => setViewMode('list')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'list' ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-400'}`}>รายการตรวจงาน</button>
-                <button onClick={() => setViewMode('summary')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'summary' ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-400'}`}>ตารางสรุปคะแนน</button>
+                <button onClick={() => setViewMode('list')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'list' ? 'bg-indigo-500 text-white shadow-md' : 'bg-indigo-50 text-indigo-400'}`}>รายการตรวจงาน</button>
+                <button onClick={() => setViewMode('summary')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${viewMode === 'summary' ? 'bg-indigo-500 text-white shadow-md' : 'bg-indigo-50 text-indigo-400'}`}>ตารางสรุปคะแนน</button>
               </div>
             </div>
           </div>
@@ -147,7 +145,7 @@ const TeacherView: React.FC<TeacherViewProps> = ({ submissions, onUpdate, handle
       {viewMode === 'summary' ? (
         <div className="bg-white p-8 rounded-[3rem] shadow-xl border-4 border-indigo-50 animate-in fade-in duration-500">
           <div className="flex flex-col md:flex-row justify-between items-end gap-4 mb-8 no-print">
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <div>
                 <label className="block text-[10px] font-black text-indigo-300 mb-1 ml-2 uppercase">ระดับชั้น</label>
                 <select value={summaryGrade} onChange={e => setSummaryGrade(e.target.value)} className="p-3 rounded-2xl bg-indigo-50 border-2 border-indigo-100 font-bold outline-none text-indigo-700">
@@ -201,56 +199,98 @@ const TeacherView: React.FC<TeacherViewProps> = ({ submissions, onUpdate, handle
         </div>
       ) : (
         <div className="grid gap-4">
-          <div className="bg-white p-4 rounded-3xl shadow-sm border-2 border-indigo-50 flex flex-wrap gap-4 items-center">
-            <input type="text" placeholder="ค้นหาชื่อ/เลขที่..." value={filterText} onChange={e => setFilterText(e.target.value)} className="flex-1 p-3 rounded-2xl bg-slate-50 border-2 border-slate-100 outline-none text-sm"/>
-            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)} className="p-3 rounded-2xl bg-white border-2 border-slate-100 text-sm font-bold">
-              <option value="All">สถานะทั้งหมด</option>
-              <option value="Pending">รอตรวจ ⏳</option>
-              <option value="Graded">ตรวจแล้ว ✅</option>
-            </select>
+          {/* Combined Filters for List View */}
+          <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border-2 border-indigo-50 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <div className="flex-1 w-full relative">
+                 <input type="text" placeholder="ค้นหาชื่อ หรือ เลขที่..." value={filterText} onChange={e => setFilterText(e.target.value)} className="w-full p-3 pl-10 rounded-2xl bg-slate-50 border-2 border-slate-100 outline-none text-sm focus:border-indigo-300 transition-all"/>
+                 <span className="absolute left-3 top-3 text-slate-300">🔍</span>
+              </div>
+              <div className="flex gap-2 w-full md:w-auto">
+                <select value={filterActivity} onChange={e => setFilterActivity(e.target.value)} className="flex-1 md:flex-none p-3 rounded-2xl bg-white border-2 border-slate-100 text-sm font-bold outline-none cursor-pointer">
+                  <option value="All">กิจกรรมทั้งหมด</option>
+                  <option value="Sports Day">🏃 กีฬาสี</option>
+                  <option value="Children Day">🎈 วันเด็ก</option>
+                </select>
+                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)} className="flex-1 md:flex-none p-3 rounded-2xl bg-white border-2 border-slate-100 text-sm font-bold outline-none cursor-pointer">
+                  <option value="All">สถานะทั้งหมด</option>
+                  <option value="Pending">⏳ รอตรวจ</option>
+                  <option value="Graded">✅ ตรวจแล้ว</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-50">
+               <div className="flex items-center gap-2">
+                 <span className="text-[10px] font-black text-indigo-300 uppercase tracking-widest">ระดับชั้น:</span>
+                 <div className="flex bg-slate-100 p-1 rounded-xl">
+                   {['All', 'Prathom 5', 'Prathom 6'].map(g => (
+                     <button key={g} onClick={() => setFilterGrade(g)} className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${filterGrade === g ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}>
+                       {g === 'All' ? 'ทั้งหมด' : g === 'Prathom 5' ? 'ป.5' : 'ป.6'}
+                     </button>
+                   ))}
+                 </div>
+               </div>
+               <div className="flex items-center gap-2 ml-auto">
+                 <span className="text-[10px] font-black text-indigo-300 uppercase tracking-widest">ห้อง:</span>
+                 <select value={filterRoom} onChange={e => setFilterRoom(e.target.value)} className="bg-transparent text-[10px] font-bold text-slate-600 outline-none cursor-pointer">
+                    <option value="All">ทุกห้อง</option>
+                    {[1, 2, 3, 4].map(r => <option key={r} value={`Room ${r}`}>ห้อง {r}</option>)}
+                 </select>
+               </div>
+            </div>
           </div>
 
-          {filteredSubmissions.map((sub) => (
-            <div key={sub.rowId} className={`p-5 rounded-[2.5rem] border-4 transition-all bg-white ${sub.review?.status === 'Graded' ? 'border-green-100' : 'border-indigo-50 shadow-md'}`}>
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="text-3xl bg-slate-50 p-3 rounded-2xl">{sub.activityType === 'Sports Day' ? '🏃' : '🎈'}</div>
-                  <div>
-                    <h4 className="font-bold text-slate-700">{sub.name} <span className="text-slate-400 text-xs ml-2">เลขที่ {sub.studentNumber}</span></h4>
-                    <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">{sub.grade === 'Prathom 5' ? 'ป.5' : 'ป.6'} | {sub.room.replace('Room ', 'ห้อง ')}</p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <a href={sub.fileUrl} target="_blank" className="bg-indigo-100 text-indigo-600 px-4 py-2 rounded-xl font-bold text-xs">วิดีโอ 📺</a>
-                  <button onClick={() => { setEditingId(sub.rowId!); setRubric(sub.review || { contentAccuracy: 0, participation: 0, presentation: 0, discipline: 0, totalScore: 0, percentage: 0, comment: '', status: 'Pending' }); }} className={`px-4 py-2 rounded-xl font-bold text-xs text-white ${sub.review?.status === 'Graded' ? 'bg-green-500' : 'bg-orange-400 shadow-lg'}`}>
-                    {sub.review?.status === 'Graded' ? `${sub.review.totalScore}/20` : 'ให้คะแนน ✍️'}
-                  </button>
-                </div>
+          {/* Submission List */}
+          <div className="grid gap-4">
+            {filteredSubmissions.length === 0 ? (
+              <div className="text-center p-20 bg-white rounded-[3rem] border-4 border-dashed border-slate-100">
+                <p className="text-5xl mb-4">🔍</p>
+                <p className="text-slate-400 font-bold italic">ไม่พบข้อมูลงานที่หนูตามหาจ้า...</p>
               </div>
+            ) : (
+              filteredSubmissions.map((sub) => (
+                <div key={sub.rowId} className={`p-5 rounded-[2.5rem] border-4 transition-all bg-white ${sub.review?.status === 'Graded' ? 'border-green-100' : 'border-indigo-50 shadow-md'}`}>
+                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="text-3xl bg-slate-50 p-3 rounded-2xl">{sub.activityType === 'Sports Day' ? '🏃' : '🎈'}</div>
+                      <div>
+                        <h4 className="font-bold text-slate-700">{sub.name} <span className="text-slate-400 text-xs ml-2">เลขที่ {sub.studentNumber}</span></h4>
+                        <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">{sub.grade === 'Prathom 5' ? 'ป.5' : 'ป.6'} | {sub.room.replace('Room ', 'ห้อง ')}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <a href={sub.fileUrl} target="_blank" className="bg-indigo-100 text-indigo-600 px-4 py-2 rounded-xl font-bold text-xs hover:bg-indigo-200 transition-all">วิดีโอ 📺</a>
+                      <button onClick={() => { setEditingId(sub.rowId!); setRubric(sub.review || { contentAccuracy: 0, participation: 0, presentation: 0, discipline: 0, totalScore: 0, percentage: 0, comment: '', status: 'Pending' }); }} className={`px-4 py-2 rounded-xl font-bold text-xs text-white transition-all transform hover:scale-105 ${sub.review?.status === 'Graded' ? 'bg-green-500' : 'bg-orange-400 shadow-lg'}`}>
+                        {sub.review?.status === 'Graded' ? `${sub.review.totalScore}/20` : 'ให้คะแนน ✍️'}
+                      </button>
+                    </div>
+                  </div>
 
-              {editingId === sub.rowId && (
-                <div className="mt-4 p-5 bg-indigo-50 rounded-[2rem] border-2 border-indigo-100 animate-in slide-in-from-top duration-300">
-                  <div className="flex justify-between items-center mb-4">
-                    <h5 className="font-bold text-indigo-700 text-sm">ประเมินผลงาน</h5>
-                    <button onClick={handleAutoGrade} disabled={isAutoGrading} className="bg-yellow-400 text-indigo-900 px-3 py-1 rounded-lg font-bold text-[10px] shadow-sm">
-                      {isAutoGrading ? 'กำลังตรวจ...' : '🪄 AI ช่วยตรวจ'}
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                    <PointSelector label="ความถูกต้อง" current={rubric.contentAccuracy} onSelect={v => updateRubricItem('contentAccuracy', v)}/>
-                    <PointSelector label="ความตั้งใจ" current={rubric.participation} onSelect={v => updateRubricItem('participation', v)}/>
-                    <PointSelector label="การนำเสนอ" current={rubric.presentation} onSelect={v => updateRubricItem('presentation', v)}/>
-                    <PointSelector label="ระเบียบวินัย" current={rubric.discipline} onSelect={v => updateRubricItem('discipline', v)}/>
-                  </div>
-                  <textarea value={rubric.comment} onChange={e => setRubric({...rubric, comment: e.target.value})} className="w-full p-3 rounded-xl h-16 border border-indigo-100 outline-none text-xs mt-2" placeholder="คำชมจากคุณครู..."/>
-                  <div className="flex gap-2 mt-4">
-                    <button onClick={handleSave} disabled={saving} className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold text-sm shadow-md">{saving ? 'กำลังบันทึก...' : 'บันทึกคะแนน'}</button>
-                    <button onClick={() => setEditingId(null)} className="px-6 bg-white text-slate-400 rounded-xl border border-slate-100 text-sm">ยกเลิก</button>
-                  </div>
+                  {editingId === sub.rowId && (
+                    <div className="mt-4 p-5 bg-indigo-50 rounded-[2rem] border-2 border-indigo-100 animate-in slide-in-from-top duration-300">
+                      <div className="flex justify-between items-center mb-4">
+                        <h5 className="font-bold text-indigo-700 text-sm">ประเมินผลงาน</h5>
+                        <button onClick={handleAutoGrade} disabled={isAutoGrading} className="bg-yellow-400 text-indigo-900 px-3 py-1 rounded-lg font-bold text-[10px] shadow-sm hover:bg-yellow-300">
+                          {isAutoGrading ? '🪄 AI กำลังตรวจ...' : '🪄 AI ช่วยตรวจ'}
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                        <PointSelector label="ความถูกต้อง" current={rubric.contentAccuracy} onSelect={v => updateRubricItem('contentAccuracy', v)}/>
+                        <PointSelector label="ความตั้งใจ" current={rubric.participation} onSelect={v => updateRubricItem('participation', v)}/>
+                        <PointSelector label="การนำเสนอ" current={rubric.presentation} onSelect={v => updateRubricItem('presentation', v)}/>
+                        <PointSelector label="ระเบียบวินัย" current={rubric.discipline} onSelect={v => updateRubricItem('discipline', v)}/>
+                      </div>
+                      <textarea value={rubric.comment} onChange={e => setRubric({...rubric, comment: e.target.value})} className="w-full p-3 rounded-xl h-20 border border-indigo-100 outline-none text-xs mt-2 bg-white" placeholder="พิมพ์คำชมจากคุณครูที่นี่ หรือให้ AI ช่วยร่างให้นะจ๊ะ..."/>
+                      <div className="flex gap-2 mt-4">
+                        <button onClick={handleSave} disabled={saving} className="flex-1 bg-indigo-500 text-white py-3 rounded-xl font-bold text-sm shadow-md hover:bg-indigo-600 transition-all">{saving ? 'กำลังบันทึก...' : 'บันทึกคะแนนเรียบร้อย ✅'}</button>
+                        <button onClick={() => setEditingId(null)} className="px-6 bg-white text-slate-400 rounded-xl border border-slate-100 text-sm hover:bg-slate-50 transition-all">ยกเลิก</button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
