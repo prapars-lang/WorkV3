@@ -7,7 +7,7 @@
     <title>วิชาสุขศึกษาและพลศึกษา | ระบบส่งงานออนไลน์</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Sarabun:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Sarabun:wght@400;500;600;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -41,42 +41,54 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
         }
 
+        /* Print Settings for PDF Generation */
         @media print {
             @page {
                 size: A4;
-                margin: 1.5cm;
+                margin: 2cm;
             }
-            body {
+            html, body {
+                background: white !important;
                 font-family: 'Sarabun', sans-serif !important;
-                background: white !important;
                 color: black !important;
+                margin: 0;
+                padding: 0;
             }
-            #root, #root * { visibility: visible; }
-            .no-print { display: none !important; }
+            #root, #root * {
+                visibility: visible !important;
+            }
+            .no-print {
+                display: none !important;
+            }
             .glass-morphism {
-                background: white !important;
+                background: transparent !important;
                 border: none !important;
                 box-shadow: none !important;
                 backdrop-filter: none !important;
                 padding: 0 !important;
-                margin: 0 !important;
             }
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
-                font-size: 12pt !important;
+                font-family: 'Sarabun', sans-serif !important;
             }
             th, td {
-                border: 1px solid #333 !important;
-                padding: 6px 4px !important;
+                border: 0.5pt solid #000 !important;
+                padding: 8px 6px !important;
+                font-size: 11pt !important;
                 color: black !important;
+                -webkit-print-color-adjust: exact;
             }
             th {
-                background-color: #f3f4f6 !important;
-                -webkit-print-color-adjust: exact;
+                background-color: #f1f5f9 !important;
+                font-weight: bold !important;
             }
             tr {
                 page-break-inside: avoid !important;
+            }
+            h1, h2, h3, p, span {
+                color: black !important;
+                font-family: 'Sarabun', sans-serif !important;
             }
         }
 
